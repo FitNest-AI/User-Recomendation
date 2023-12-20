@@ -1,23 +1,26 @@
-from flask import Flask, jsonify, request
-from flask_pymongo import PyMongo
-from bson import ObjectId
-import jwt
+import bson
 import os
-from dotenv import load_dotenv
+import jwt
+from datetime import datetime
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import MinMaxScaler
+import json
 
-load_dotenv()
+import numpy as np
+
+from flask import Flask, jsonify, request
+from flask_pymongo import PyMongo
+
+from pymongo.errors import DuplicateKeyError, OperationFailure
+from bson.objectid import ObjectId
+# from bson.errors import InvalidId
 
 app = Flask(__name__)
-app.config['MONGO_URI'] = os.getenv("MONGO_URI")
+app.config['MONGO_URI'] = 'mongodb+srv://fitnest:fitnest151123@mycluster.ywz1xtt.mongodb.net/fitnest_db?retryWrites=true&w=majority'
 mongo = PyMongo(app)
 
 LEVEL_MULTIPLIER = {'easy': 1, 'medium': 2, 'hard': 3}
-
-def load_environment_variables():
-    load_dotenv()
 
 def get_recommendation(database, workout_data, level="easy", target=["abs"]):
     # Data preparation
@@ -86,7 +89,7 @@ def find_nearest_neighbors(database, prepared_data, target):
 
 @app.route('/', methods=['GET'])
 def get_workout():
-    secret_key = os.getenv("SECRET_KEY")
+    secret_key = 'dd8ef424f64d2f12f965b8e1c039cd301745b58f9a6382f4c2fd4a594db2d5fc0489ce1cd081e2781af9f09b06bff07d4ddc840ababaca31423b88b66df1e60e'
     token = request.headers.get('Authorization')
     decoded_token = jwt.decode(token, secret_key, algorithms=['HS256'])
 
