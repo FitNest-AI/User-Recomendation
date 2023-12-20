@@ -101,8 +101,6 @@ def get_workout():
     workouts = mongo.db.workouts.find()
     result = prepare_result_data(workouts, level, target_muscle_names)
 
-    print(type(result)) # type list
-
     # Pagination parameters
     page = request.args.get('page', default=1, type=int)
     per_page = request.args.get('per_page', default=6, type=int)
@@ -128,18 +126,11 @@ def get_workout():
             'workout': paginated_result,
             'count': len(result),
             'page': page,
-            'per_page': per_page,
-            'search_query': search_query,
+            'current_page': page,  # Include current_page in the response
         }
     }
 
     return jsonify(response)
-
-    return jsonify(response)
-
-    return jsonify(response)
-
-
 
 def prepare_result_data(workouts, level, target_muscle_names):
     result = []
@@ -253,4 +244,4 @@ def calculate_points_by_target_muscle(moveset):
     return points_by_target_muscle
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5200)
